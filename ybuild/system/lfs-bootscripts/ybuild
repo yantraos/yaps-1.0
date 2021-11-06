@@ -1,0 +1,14 @@
+id='lfs-bootscripts'
+version=20210608
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/lfs-bootscripts_add-support-uefi.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../lfs-bootscripts_add-support-uefi.patch
+
+    make DESTDIR=$pkgdir install
+}

@@ -1,0 +1,19 @@
+id='gdbm'
+version=1.18.1
+release='1'
+runtime=('glibc' 'bash' 'readline')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    sed -r -i '/^char.*parseopt_program_(doc|args)/d' src/parseopt.c
+
+    ./configure --prefix=/usr    \
+                --disable-static \
+                --enable-libgdbm-compat
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

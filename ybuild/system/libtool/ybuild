@@ -1,0 +1,15 @@
+id='libtool'
+version=2.4.6
+release='1'
+runtime=('glibc' 'bash' 'tar' 'gcc')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

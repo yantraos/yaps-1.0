@@ -1,0 +1,22 @@
+id='pkgutils'
+version=5.40.7
+release='1'
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/pkgutils_ignore-conflict.patch"
+        "$YSRC_URL/pkgutils_remove-libtool.patch"
+        "$YSRC_URL/pkgutils_add-compress-infopages.patch"
+        "$YSRC_URL/pkgutils_fix-build-needed-trigger.patch")
+
+build() {
+	cd $id-$version
+
+    patch -Np1 -i ../pkgutils_add-compress-infopages.patch
+    patch -Np1 -i ../pkgutils_fix-build-needed-trigger.patch
+    patch -Np1 -i ../pkgutils_ignore-conflict.patch
+    patch -Np1 -i ../pkgutils_remove-libtool.patch
+
+	sed -i -e 's/ --static//' \
+    	       -e 's/ -static//' Makefile
+
+    make DESTDIR=$pkgdir install
+}

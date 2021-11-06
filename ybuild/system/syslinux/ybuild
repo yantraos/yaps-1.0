@@ -1,0 +1,18 @@
+id='syslinux'
+version=6.03
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.xz"
+         "$YSRC_URL/$id-$version-sysmacros.patch")
+
+build() {
+    cd $id-$version
+
+    export CFLAGS="$CFLAGS -fcommon"
+
+    patch -p1 -i ../$id-$version-sysmacros.patch
+
+    make OPTFLAGS="$CFLAGS" installer
+
+    make OPTFLAGS="$CFLAGS" INSTALLROOT=$pkgdir MANDIR=/usr/share/man install
+}

@@ -1,0 +1,15 @@
+id='bison'
+version=3.7.1
+release='1'
+runtime=('glibc' 'm4' 'bash')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr --docdir=/usr/share/doc/$id-$version
+
+    make -j1
+
+    make DESTDIR=$pkgdir install
+}

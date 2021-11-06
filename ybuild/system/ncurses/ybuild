@@ -1,0 +1,41 @@
+id='ncurses'
+version=6.2
+release='1'
+runtime=('glibc')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    sed -i '/LIBTOOL_INSTALL/d' c++/Makefile.in
+
+    ./configure --prefix=/usr           \
+                --mandir=/usr/share/man \
+                --with-shared           \
+                --without-debug         \
+                --without-normal        \
+                --enable-pc-files       \
+                --enable-widec
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    mkdir -pv $pkgdir/lib
+    mv -v $pkgdir/usr/lib/libncursesw.so.6* $pkgdir/lib
+
+    ln -sfv ../../lib/$(readlink $pkgdir/usr/lib/libncursesw.so) $pkgdir/usr/lib/libncursesw.so
+
+    for lib in ncurses form panel menu ; do
+        rm -vf                    $pkgdir/usr/lib/lib${lib}.so
+        echo "INPUT(-l${lib}w)" > $pkgdir/usr/lib/lib${lib}.so
+        ln -sfv ${lib}w.pc        $pkgdir/usr/lib/pkgconfig/${lib}.pc
+    done
+
+    rm -vf                     $pkgdir/usr/lib/libcursesw.so
+    echo "INPUT(-lncursesw)" > $pkgdir/usr/lib/libcursesw.so
+    ln -sfv libncurses.so      $pkgdir/usr/lib/libcurses.so
+
+    mkdir -vp      $pkgdir/usr/share/doc/$id-$version
+    cp -v -R doc/* $pkgdir/usr/share/doc/$id-$version
+}

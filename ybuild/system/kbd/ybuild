@@ -1,0 +1,23 @@
+id='kbd'
+version=2.3.0
+release='1'
+runtime=('glibc')
+source=("$YSRC_URL/$id-$version.tar.xz"
+         "$YSRC_URL/$id-$version-backspace-1.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../$id-$version-backspace-1.patch
+
+    sed -i '/RESIZECONS_PROGS=/s/yes/no/' configure
+    sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in
+
+    ./configure --prefix=/usr --disable-vlock
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    rm -v $pkgdir/usr/lib/libtswrap.{a,la,so*}
+}

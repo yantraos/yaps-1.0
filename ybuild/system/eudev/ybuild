@@ -1,0 +1,29 @@
+id='eudev'
+version=3.2.10
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.gz"
+        "$YSRC_URL/udev-lfs-20171102.tar.xz")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr           \
+                        --bindir=/sbin          \
+                        --sbindir=/sbin         \
+                        --libdir=/usr/lib       \
+                        --sysconfdir=/etc       \
+                        --libexecdir=/lib       \
+                        --with-rootprefix=      \
+                        --with-rootlibdir=/lib  \
+                        --enable-manpages       \
+                        --disable-static
+
+    make
+
+    make libdir=/usr/lib DESTDIR=$pkgdir install
+
+    cd ..
+    chmod a+rwx -R udev-lfs-20171102
+    make -f udev-lfs-20171102/Makefile.lfs DESTDIR=$pkgdir install
+}

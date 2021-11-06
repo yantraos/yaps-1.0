@@ -1,0 +1,36 @@
+id=glibc
+version=2.32
+release='1'
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/$id-$version-fhs-1.patch")
+skippack=1
+
+build() {
+	cd $id-$version
+
+	case $(uname -m) in
+        i?86)   ln -sfv ld-linux.so.2 $YDIR/lib/ld-lsb.so.3
+        ;;
+        x86_64) ln -sfv ../lib/ld-linux-x86-64.so.2 $YDIR/lib64
+                ln -sfv ../lib/ld-linux-x86-64.so.2 $YDIR/lib64/ld-lsb-x86-64.so.3
+        ;;
+    esac
+
+    patch -Np1 -i ../$id-$version-fhs-1.patch
+
+	mkdir -v build
+	cd       build
+
+	../configure                                \
+		  --prefix=/usr                         \
+		  --host=$YTGT                          \
+		  --build=$(../scripts/config.guess)    \
+		  --enable-kernel=3.2                   \
+		  --with-headers=$YDIR/usr/include      \
+          libc_cv_slibdir=/lib
+
+	make
+	make DESTDIR=$YDIR install
+
+	$YDIR/tools/libexec/gcc/$YTGT/10.2.0/install-tools/mkheaders
+}

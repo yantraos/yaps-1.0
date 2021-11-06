@@ -1,0 +1,17 @@
+id='zstd'
+version=1.4.5
+release='1'
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    make
+
+    make prefix=$pkgdir/usr install
+
+    rm -v $pkgdir/usr/lib/libzstd.a
+    mkdir -pv $pkgdir/lib
+    mv -v $pkgdir/usr/lib/libzstd.so.* $pkgdir/lib
+    ln -sfv ../../lib/$(readlink $pkgdir/usr/lib/libzstd.so) $pkgdir/usr/lib/libzstd.so
+}

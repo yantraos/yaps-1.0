@@ -1,0 +1,16 @@
+id='efivar'
+version=37
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.bz2"
+        "$YSRC_URL/$id-$version-gcc_9-1.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../efivar-37-gcc_9-1.patch
+
+    make CFLAGS="-O2 -Wno-stringop-truncation"
+
+    make libdir=/usr/lib DESTDIR=$pkgdir install
+}

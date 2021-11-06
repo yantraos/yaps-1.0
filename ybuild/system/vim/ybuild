@@ -1,0 +1,28 @@
+id='vim'
+version=8.2.1361
+release='1'
+runtime=('acl' 'glibc' 'gpm' 'libffi' 'libcrypt' 'pcre' 'zlib')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+
+    SRCDIR=src
+    srcdir=$PWD/src
+    ./configure --prefix=/usr
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    mkdir -pv $pkgdir/usr/bin
+    ln -sv vim $pkgdir/usr/bin/vi
+    for L in  $pkgdir/usr/share/man/{,*/}man1/vim.1; do
+        ln -sv vim.1 $(dirname $L)/vi.1
+    done
+
+    mkdir -pv $pkgdir/usr/share/doc/$id-$version
+    ln -sv ../vim/vim82/doc $pkgdir/usr/share/doc/$id-$version
+}

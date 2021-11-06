@@ -1,0 +1,16 @@
+id='check'
+version=0.15.2
+release='1'
+runtime=('gawk')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr --disable-static
+
+    make
+
+    mkdir -pv $pkgdir/usr/share/doc/$id-$version
+    make docdir=$pkgdir/usr/share/doc/$id-$version DESTDIR=$pkgdir install
+}

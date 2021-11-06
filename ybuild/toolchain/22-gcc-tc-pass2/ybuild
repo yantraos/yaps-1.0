@@ -1,0 +1,56 @@
+id='gcc-pass2'
+orgid='gcc'
+version=10.2.0
+release='1'
+gmp_version=6.2.0
+mpc_version=1.1.0
+mpfr_version=4.1.0
+source=("$YSRC_URL/$orgid-$version.tar.xz"
+        "$YSRC_URL/gmp-$gmp_version.tar.xz"
+        "$YSRC_URL/mpc-$mpc_version.tar.gz"
+        "$YSRC_URL/mpfr-$mpfr_version.tar.xz")
+skippack=1
+
+build() {
+	cd $orgid-$version
+
+	mv -v ../mpfr-$mpfr_version mpfr
+	mv -v ../gmp-$gmp_version gmp
+	mv -v ../mpc-$mpc_version mpc
+
+    case $(uname -m) in
+      x86_64)
+        sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
+      ;;
+    esac
+
+    mkdir -v build
+    cd       build
+
+    mkdir -pv $YTGT/libgcc
+    ln -s ../../../libgcc/gthr-posix.h $YTGT/libgcc/gthr-default.h
+
+    ../configure                                       \
+        --build=$(../config.guess)                     \
+        --host=$YTGT                                   \
+        --prefix=/usr                                  \
+        CC_FOR_TARGET=$YTGT-gcc                        \
+        --with-build-sysroot=$YDIR                     \
+        --enable-initfini-array                        \
+        --disable-nls                                  \
+        --disable-multilib                             \
+        --disable-decimal-float                        \
+        --disable-libatomic                            \
+        --disable-libgomp                              \
+        --disable-libquadmath                          \
+        --disable-libssp                               \
+        --disable-libvtv                               \
+        --disable-libstdcxx                            \
+        --enable-languages=c,c++
+
+    make
+
+    make DESTDIR=$YDIR install
+
+    ln -sv gcc $YDIR/usr/bin/cc
+}

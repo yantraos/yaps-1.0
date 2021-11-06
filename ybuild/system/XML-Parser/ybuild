@@ -1,0 +1,15 @@
+id='XML-Parser'
+version=2.46
+release='1'
+runtime=('expat' 'perl')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    perl Makefile.PL
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

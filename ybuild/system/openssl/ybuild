@@ -1,0 +1,23 @@
+id='openssl'
+version=1.1.1g
+release='1'
+runtime=('glibc' 'perl')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    ./config --prefix=/usr         \
+             --openssldir=/etc/ssl \
+             --libdir=lib          \
+             shared                \
+             zlib-dynamic
+
+    make
+
+    sed -i '/INSTALL_LIBS/s/libcrypto.a libssl.a//' Makefile
+    make MANSUFFIX=ssl DESTDIR=$pkgdir install
+
+    mv -v $pkgdir/usr/share/doc/openssl $pkgdir/usr/share/doc/$id-$version
+    cp -vfr doc/* $pkgdir/usr/share/doc/$id-$version
+}

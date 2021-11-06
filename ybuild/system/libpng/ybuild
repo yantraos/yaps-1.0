@@ -1,0 +1,17 @@
+id='libpng'
+version=1.6.37
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/$id-$version-apng.patch.gz")
+
+build() {
+    cd $id-$version
+
+    gzip -cd ../$id-$version-apng.patch.gz | patch -p0
+
+    LIBS=-lpthread ./configure --prefix=/usr --disable-static
+
+    make
+    make DESTDIR=$pkgdir install
+}

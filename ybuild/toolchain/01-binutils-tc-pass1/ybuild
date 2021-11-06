@@ -1,0 +1,23 @@
+id='binutils-pass1'
+orgid='binutils'
+version=2.35
+release='1'
+source=("$YSRC_URL/$orgid-$version.tar.xz")
+skippack=1
+
+build() {
+	cd $orgid-$version
+
+	mkdir -v build
+	cd       build
+
+	../configure  \
+		--prefix=/tools \
+		--with-sysroot=$YDIR \
+		--target=$YTGT \
+		--disable-nls \
+		--disable-werror
+
+	make
+	make install
+}

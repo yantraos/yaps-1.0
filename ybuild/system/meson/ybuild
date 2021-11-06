@@ -1,0 +1,14 @@
+id='meson'
+version=0.55.0
+release='1'
+runtime=('ninja')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    python3 setup.py build
+
+    python3 setup.py install \
+         --prefix=/usr --root=$pkgdir --optimize=1
+}

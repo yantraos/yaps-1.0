@@ -1,0 +1,40 @@
+id='gcc'
+version=10.2.0
+release='1'
+runtime=('binutils' 'mpc')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    case $(uname -m) in
+      x86_64)
+        sed -e '/m64=/s/lib64/lib/' \
+            -i.orig gcc/config/i386/t-linux64
+      ;;
+    esac
+
+    mkdir -v build
+    cd       build
+
+    ../configure --prefix=/usr            \
+                 LD=ld                    \
+                 --enable-languages=c,c++ \
+                 --disable-multilib       \
+                 --disable-bootstrap      \
+                 --with-system-zlib
+
+    make
+
+    make DESTDIR=$pkgdir install
+    rm -rf $pkgdir/usr/lib/gcc/$(gcc -dumpmachine)/$version/include-fixed/bits/
+
+    ln -sv ../usr/bin/cpp $pkgdir/lib
+
+    install -v -dm755 $pkgdir/usr/lib/bfd-plugins
+    ln -sfv ../../libexec/gcc/$(gcc -dumpmachine)/$version/liblto_plugin.so \
+            $pkgdir/usr/lib/bfd-plugins/
+
+    mkdir -pv $pkgdir/usr/share/gdb/auto-load/usr/lib
+    mv -v $pkgdir/usr/lib/*gdb.py $pkgdir/usr/share/gdb/auto-load/usr/lib
+}

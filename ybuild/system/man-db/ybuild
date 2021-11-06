@@ -1,0 +1,26 @@
+id='man-db'
+version=2.9.3
+release='1'
+runtime=('bash' 'gdbm' 'groff' 'less' 'libpipeline' 'zlib')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    #sed -i '/find/s@/usr@@' init/systemd/man-db.service.in
+
+    ./configure --prefix=/usr                        \
+                --docdir=/usr/share/doc/$id-$version \
+                --sysconfdir=/etc                    \
+                --disable-setuid                     \
+                --enable-cache-owner=bin             \
+                --with-browser=/usr/bin/lynx         \
+                --with-vgrind=/usr/bin/vgrind        \
+                --with-systemdtmpfilesdir=           \
+                --with-systemdsystemunitdir=         \
+                --with-grap=/usr/bin/grap
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

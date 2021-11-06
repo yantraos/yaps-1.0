@@ -1,0 +1,11 @@
+id='blfs-bootscripts'
+version=20210110
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    make DESTDIR=$pkgdir install-service-dhcpcd install-service-wpa install-gpm
+}

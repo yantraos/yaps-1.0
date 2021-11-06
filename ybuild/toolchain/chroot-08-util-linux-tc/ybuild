@@ -1,0 +1,27 @@
+id=util-linux
+version=2.36
+release='1'
+source=("$YSRC_URL/$id-$version.tar.xz")
+skippack=1
+
+build() {
+	cd $id-$version
+
+	mkdir -pv /var/lib/hwclock
+
+    ./configure ADJTIME_PATH=/var/lib/hwclock/adjtime    \
+                --docdir=/usr/share/doc/util-linux-2.36 \
+                --disable-chfn-chsh  \
+                --disable-login      \
+                --disable-nologin    \
+                --disable-su         \
+                --disable-setpriv    \
+                --disable-runuser    \
+                --disable-pylibmount \
+                --disable-static     \
+                --without-python
+
+    make
+
+    make install
+}

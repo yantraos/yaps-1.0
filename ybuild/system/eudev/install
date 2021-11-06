@@ -1,0 +1,9 @@
+postinstall() {
+    mkdir -pv /lib/udev/rules.d
+    mkdir -pv /etc/udev/rules.d
+
+    udevadm hwdb --update
+
+    cd /lib/udev
+    ./init-net-rules.sh
+}

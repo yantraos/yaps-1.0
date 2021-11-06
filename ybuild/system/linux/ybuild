@@ -1,0 +1,76 @@
+id='linux'
+version=5.8.3
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/yantra-config")
+
+build() {
+    cd $id-$version
+
+    make mrproper
+
+    cp ../yantra-config ./.config
+    make olddefconfig
+
+    sed '/^CONFIG_LOCALVERSION=/d' -i .config
+    echo 'CONFIG_LOCALVERSION="-YANTRA"' >> .config
+
+    kernver=${version}$(grep CONFIG_LOCALVERSION= .config | cut -d '"' -f2)
+
+    #make menuconfig
+
+    make bzImage modules
+    make INSTALL_MOD_PATH=$pkgdir modules_install
+
+    mkdir -pv $pkgdir/boot
+    cp -iv arch/x86/boot/bzImage $pkgdir/boot/vmlinuz-yantra
+    echo $kernver > $pkgdir/lib/modules/KERNELVERSION
+
+
+    cp -iv System.map $pkgdir/boot/System.map-$version
+
+    cp -iv .config $pkgdir/boot/config-$version
+
+    install -d $pkgdir/usr/share/doc/$id-$version
+    cp -r Documentation/* $pkgdir/usr/share/doc/$id-$version
+
+    make clean
+    make prepare
+
+    rm -rf $pkgdir/lib/firmware
+
+    for file in $(ls arch); do
+        case $file in
+            x86|Kconfig) continue ;;
+            *) rm -fr arch/$file ;;
+        esac
+    done
+
+    # strip down sources
+    # don't package the kernel in the sources directory
+    find . -name "*Image" -exec rm "{}" \;
+    find . -name "*.cmd" -exec rm -f "{}" \;
+    rm -f .*.d
+
+    rm -fr firmware ipc .config.old .version .cocciconfig \
+    		.get_maintainer.ignore .gitattributes .gitignore .mailmap \
+    		COPYING CREDITS MAINTAINERS README Documentation
+    find . -name ".gitignore" -exec rm "{}" \;
+    for dir in block certs crypto drivers fs init kernel lib mm net samples security sound usr virt; do
+        find $dir -type f \( -name "*.c" -o -name "*.h" \) -exec rm "{}" \;
+    done
+    for i in $(ls tools); do
+        [ "$i" = "objtool" ] || rm -fr tools/$i
+    done
+    for i in $(ls tools/objtool); do
+        [ "$i" = "objtool" ] || rm -fr tools/objtool/$i
+    done
+
+    rm $pkgdir/lib/modules/$kernver/{build,source}
+    mv ../linux-$version $pkgdir/lib/modules/$kernver/build
+    ln -sv build $pkgdir/lib/modules/$kernver/source
+
+    # remove now broken symlinks
+    find -L $pkgdir/lib/modules/$kernver/build -type l -exec rm -f "{}" \;
+}

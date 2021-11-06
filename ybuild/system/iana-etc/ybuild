@@ -1,0 +1,12 @@
+id='iana-etc'
+version=20200821
+release='1'
+runtime=('')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    mkdir -pv $pkgdir/etc
+    cp services protocols $pkgdir/etc
+}

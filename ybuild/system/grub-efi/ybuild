@@ -1,0 +1,28 @@
+id='grub-efi'
+orgid='grub'
+version=2.04
+release='1'
+runtime=('gettext' 'gcc' 'bash' 'xz')
+source=("$YSRC_URL/$orgid-$version.tar.xz")
+
+build() {
+    cd $orgid-$version
+
+    ./configure --prefix=/usr  \
+                --sbindir=/sbin        \
+                --sysconfdir=/etc      \
+                --disable-efiemu       \
+                --enable-grub-mkfont   \
+                --with-platform=efi    \
+                --target=x86_64        \
+                --program-prefix=""    \
+                --program-suffix="-efi" \
+                --with-bootdir="/boot" \
+                --disable-werror
+
+    make
+    make DESTDIR=$pkgdir install
+
+    rm -r $pkgdir/etc/ $pkgdir/usr/bin $pkgdir/sbin $pkgdir/usr/share/{locale,info}
+    rm $pkgdir/usr/share/grub/grub-mkconfig_lib
+}

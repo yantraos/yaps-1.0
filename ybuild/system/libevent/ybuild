@@ -1,0 +1,15 @@
+id='libevent'
+version=2.1.12
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version-stable.tar.gz")
+
+build() {
+    cd $id-$version-stable
+
+    ./configure --prefix=/usr --disable-static
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

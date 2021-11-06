@@ -1,0 +1,32 @@
+id='coreutils'
+version=8.32
+release='1'
+runtime=('acl' 'attr' 'glibc' 'gmp' 'libcap' 'openssl')
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/$id-$version-i18n-1.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../$id-$version-i18n-1.patch
+
+    sed -i '/test.lock/s/^/#/' gnulib-tests/gnulib.mk
+
+    autoreconf -fiv
+    FORCE_UNSAFE_CONFIGURE=1 ./configure \
+                --prefix=/usr            \
+                --enable-no-install-program=kill,uptime
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    mkdir -pv $pkgdir/bin $pkgdir/usr/share/man/man8
+    mv -v $pkgdir/usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} $pkgdir/bin
+    mv -v $pkgdir/usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} $pkgdir/bin
+    mv -v $pkgdir/usr/bin/{rmdir,stty,sync,true,uname} $pkgdir/bin
+    mv -v $pkgdir/usr/bin/chroot $pkgdir/usr/sbin
+    mv -v $pkgdir/usr/share/man/man1/chroot.1 $pkgdir/usr/share/man/man8/chroot.8
+    sed -i 's/"1"/"8"/' $pkgdir/usr/share/man/man8/chroot.8
+    mv -v $pkgdir/usr/bin/{head,nice,sleep,touch} $pkgdir/bin
+}

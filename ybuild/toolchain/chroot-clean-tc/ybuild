@@ -1,0 +1,9 @@
+id='cleanning'
+version='1'
+release='1'
+skippack=1
+
+build() {
+    find /usr/{lib,libexec} -name \*.la -delete
+    rm -rf /usr/share/{info,man,doc}/*
+}

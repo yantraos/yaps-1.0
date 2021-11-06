@@ -1,0 +1,25 @@
+id='Python'
+version=3.8.5
+release='1'
+runtime=('bzip2' 'expat' 'gdbm' 'libffi' 'libnsl' 'libxcrypt' 'openssl' 'zlib')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr       \
+                --enable-shared     \
+                --with-system-expat \
+                --with-system-ffi   \
+                --with-ensurepip=yes
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    chmod -v 755 $pkgdir/usr/lib/libpython3.8.so
+    chmod -v 755 $pkgdir/usr/lib/libpython3.so
+    ln -sfv pip3.8 $pkgdir/usr/bin/pip3
+
+    install -v -dm755 $pkgdir/usr/share/doc/python-$version/html
+}

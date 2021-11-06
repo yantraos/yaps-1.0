@@ -1,0 +1,29 @@
+id='util-linux'
+version=2.36
+release='1'
+runtime=('coreutils' 'shadow' 'systemd' 'python')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    mkdir -pv /var/lib/hwclock
+
+    ./configure ADJTIME_PATH=/var/lib/hwclock/adjtime   \
+                --docdir=/usr/share/doc/$id-$version \
+                --disable-chfn-chsh  \
+                --disable-login      \
+                --disable-nologin    \
+                --disable-su         \
+                --disable-setpriv    \
+                --disable-runuser    \
+                --disable-pylibmount \
+                --disable-static     \
+                --without-systemd    \
+                --without-systemdsystemunitdir \
+                --without-python
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

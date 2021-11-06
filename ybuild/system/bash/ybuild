@@ -1,0 +1,23 @@
+id='bash'
+version=5.0
+release='1'
+runtime=('glibc' 'nucurses' 'readline')
+source=("$YSRC_URL/$id-$version.tar.gz"
+        "$YSRC_URL/$id-$version-upstream_fixes-1.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../$id-$version-upstream_fixes-1.patch
+
+    ./configure --prefix=/usr                    \
+                --docdir=/usr/share/doc/bash-5.0 \
+                --without-bash-malloc            \
+                --with-installed-readline
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    mv -vf $pkgdir/usr/bin/bash $pkgdir/bin
+}

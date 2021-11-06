@@ -1,0 +1,12 @@
+id='lz4'
+version=1.9.3
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    make PREFIX=/usr
+    make DESTDIR=$pkgdir PREFIX=/usr install
+}

@@ -1,0 +1,10 @@
+id='ca-certificates'
+version=20210119
+_version=${version:0:4}-${version:4:2}-${version:6:2}
+release='1'
+runtime=()
+source=("$YSRC_URL/cacert-$_version.pem")
+
+build() {
+    install -Dm644 cacert-$_version.pem $pkgdir/etc/ssl/cert.pem
+}

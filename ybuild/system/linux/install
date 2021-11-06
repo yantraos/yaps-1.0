@@ -1,0 +1,37 @@
+postinstall() {
+    echo 10.0-systemd > /etc/yantra-release
+
+    install -v -m755 -d /etc/modprobe.d
+cat > /etc/modprobe.d/usb.conf << "EOF"
+# Begin /etc/modprobe.d/usb.conf
+
+install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true
+install uhci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i uhci_hcd ; true
+
+# End /etc/modprobe.d/usb.conf
+EOF
+
+cat > /etc/lsb-release << "EOF"
+DISTRIB_ID="Linux From Scratch"
+DISTRIB_RELEASE="10.0-systemd"
+DISTRIB_CODENAME="yantra"
+DISTRIB_DESCRIPTION="Linux From Scratch"
+EOF
+
+cat > /etc/os-release << "EOF"
+NAME="Linux From Scratch"
+VERSION="10.0-systemd"
+ID=yantra
+PRETTY_NAME="Linux From Scratch 10.0-systemd"
+VERSION_CODENAME="yantra"
+EOF
+
+if [ -f /lib/modules/KERNELVERSION ]; then
+	kver=$(cat /lib/modules/KERNELVERSION)
+else
+	kver=$(file /boot/vmlinuz-yantra | cut -d ' ' -f9)
+fi
+
+mkinitramfs -q -k $kver -o /boot/initrd-yantra.img
+depmod $kver
+}

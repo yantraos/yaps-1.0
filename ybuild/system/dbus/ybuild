@@ -1,0 +1,38 @@
+id='dbus'
+version=1.12.20
+release='1'
+runtime=('expat')
+source=("$YSRC_URL/$id-$version.tar.gz")
+
+build() {
+    cd $id-$version
+
+    mkdir -pv $pkgdir/lib
+
+    ./configure --prefix=/usr                       \
+                --sysconfdir=/etc                   \
+                --localstatedir=/var                \
+                --disable-static                    \
+                --disable-doxygen-docs              \
+                --disable-xml-docs                  \
+                --docdir=/usr/share/doc/$id-$version \
+                --with-systemduserunitdir=no         \
+                --with-systemdsystemunitdir=no       \
+                --with-system-pid-file=/run/dbus/pid \
+                --with-system-socket=/run/dbus/system_bus_socket \
+                --with-console-auth-dir=/run/console
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    mv -v $pkgdir/usr/lib/libdbus-1.so.* $pkgdir/lib
+    ln -sfv ../../lib/$(readlink $pkgdir/usr/lib/libdbus-1.so) $pkgdir/usr/lib/libdbus-1.so
+
+    #ln -sfv /etc/machine-id $pkgdir/var/lib/dbus
+
+    #sed -i 's:/var/run:/run:' $pkgdir/lib/systemd/system/dbus.socket
+
+    chown -v root:messagebus $pkgdir/usr/libexec/dbus-daemon-launch-helper
+    chmod -v      4750       $pkgdir/usr/libexec/dbus-daemon-launch-helper
+}

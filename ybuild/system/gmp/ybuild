@@ -1,0 +1,27 @@
+id='gmp'
+version=6.2.0
+release='1'
+runtime=('gcc' 'bash')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    cp -v configfsf.guess config.guess
+    cp -v configfsf.sub   config.sub
+
+    ./configure --prefix=/usr    \
+                --enable-cxx     \
+                --disable-static \
+                --docdir=/usr/share/doc/$id-$version
+
+    make
+    make html
+
+    make check 2>&1 | tee gmp-check-log
+
+    awk '/# PASS:/{total+=$3} ; END{print total}' gmp-check-log
+
+    make DESTDIR=$pkgdir install
+    make DESTDIR=$pkgdir install-html
+}

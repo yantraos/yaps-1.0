@@ -1,0 +1,38 @@
+id=ncurses
+version=6.2
+release='1'
+source=("$YSRC_URL/$id-$version.tar.gz")
+skippack=1
+
+build() {
+	cd $id-$version
+
+	sed -i s/mawk// configure
+
+    mkdir build
+    pushd build
+      ../configure
+      make -C include
+      make -C progs tic
+    popd
+
+    ./configure --prefix=/usr                \
+                --host=$YTGT                 \
+                --build=$(./config.guess)    \
+                --mandir=/usr/share/man      \
+                --with-manpage-format=normal \
+                --with-shared                \
+                --without-debug              \
+                --without-ada                \
+                --without-normal             \
+                --enable-widec
+
+    make
+
+    make DESTDIR=$YDIR TIC_PATH=$(pwd)/build/progs/tic install
+    echo "INPUT(-lncursesw)" > $YDIR/usr/lib/libncurses.so
+
+    mv -v $YDIR/usr/lib/libncursesw.so.6* $YDIR/lib
+
+    ln -sfv ../../lib/$(readlink $YDIR/usr/lib/libncursesw.so) $YDIR/usr/lib/libncursesw.so
+}

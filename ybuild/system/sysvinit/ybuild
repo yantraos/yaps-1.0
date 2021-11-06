@@ -1,0 +1,18 @@
+id='sysvinit'
+version=2.99
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    make -C src
+    make -C src ROOT=$pkgdir install
+
+    rm $pkgdir/usr/bin/{last,lastb,readbootlog,mesg,utmpdump,wall}
+    rm $pkgdir/bin/pidof
+    rm $pkgdir/sbin/{sulogin,logsave}
+    rm $pkgdir/usr/share/man/man1/{last,lastb,readbootlog,mesg,utmpdump,wall}.1
+    rm $pkgdir/usr/share/man/man8/{pidof,logsave,sulogin}.8
+}

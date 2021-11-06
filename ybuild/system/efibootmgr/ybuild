@@ -1,0 +1,17 @@
+id='efibootmgr'
+version=17
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.gz"
+        "$YSRC_URL/efivar.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../efivar.patch
+
+    EFIDIR=/boot/efi make
+
+    install -D src/efibootmgr $pkgdir/usr/sbin/efibootmgr
+    install -D src/efibootmgr.8 $pkgdir/usr/share/man/man8/efibootmgr.8
+}

@@ -1,0 +1,14 @@
+id='mkinitramfs'
+version=20200118
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.gz"
+        "$YSRC_URL/$id-$version.patch")
+
+build() {
+    cd $id-$version
+
+    patch -Np1 -i ../$id-$version.patch
+
+    DESTDIR=$pkgdir ./INSTALL.sh
+}

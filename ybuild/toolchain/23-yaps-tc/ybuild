@@ -1,0 +1,11 @@
+id='yaps'
+version=1.0
+release='1'
+source=("$YSRC_URL/$id-$version.tar.xz")
+skippack=1
+
+build() {
+	cd $id
+
+	make DESTDIR=/tools/ PREFIX=/ install
+}

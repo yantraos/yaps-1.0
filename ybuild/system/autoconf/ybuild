@@ -1,0 +1,17 @@
+id='autoconf'
+version=2.69
+release='1'
+runtime=('gawk' 'diffutils' 'm4' 'perl' 'bash')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    sed -i '361 s/{/\\{/' bin/autoscan.in
+
+    ./configure --prefix=/usr
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

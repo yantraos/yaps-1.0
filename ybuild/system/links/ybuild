@@ -1,0 +1,15 @@
+id='links'
+version=2.23
+release='1'
+runtime=()
+source=("$YSRC_URL/$id-$version.tar.bz2")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr --mandir=/usr/share/man
+
+    make
+
+    make DESTDIR=$pkgdir install
+}

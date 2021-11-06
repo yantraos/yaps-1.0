@@ -1,0 +1,43 @@
+id='glibc'
+version=2.32
+release='1'
+runtime=('')
+source=("$YSRC_URL/$id-$version.tar.xz"
+        "$YSRC_URL/$id-$version-fhs-1.patch"
+        "$YSRC_URL/tzdata2020a.tar.gz")
+
+build() {
+    mkdir -p $pkgdir/etc/tzdata2020a
+    cp -rf $PWD/* $pkgdir/etc/tzdata2020a
+    rm -rf $pkgdir/etc/tzdata2020a/$id-$version
+    rm -rf $pkgdir/etc/tzdata2020a/$id-$version-fhs-1.patch
+
+    cd $id-$version
+
+    patch -Np1 -i ../$id-$version-fhs-1.patch
+
+    mkdir -v build
+    cd       build
+
+    ../configure --prefix=/usr                            \
+                 --disable-werror                         \
+                 --enable-kernel=3.2                      \
+                 --enable-stack-protector=strong          \
+                 --with-headers=/usr/include              \
+                 libc_cv_slibdir=/lib
+
+    make
+
+    mkdir -pv $pkgdir/etc/
+    touch $pkgdir/etc/ld.so.conf
+
+    sed '/test-installation/s@$(PERL)@echo not running@' -i ../Makefile
+
+    make DESTDIR=$pkgdir install
+
+    cp -v ../nscd/nscd.conf $pkgdir/etc/nscd.conf
+    mkdir -pv $pkgdir/var/cache/nscd
+
+    #install -v -Dm644 ../nscd/nscd.tmpfiles $pkgdir/usr/lib/tmpfiles.d/nscd.conf
+    #install -v -Dm644 ../nscd/nscd.service $pkgdir/lib/systemd/system/nscd.service
+}

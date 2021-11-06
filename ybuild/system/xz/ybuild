@@ -1,0 +1,22 @@
+id='xz'
+version=5.2.5
+release='1'
+runtime=('bash')
+source=("$YSRC_URL/$id-$version.tar.xz")
+
+build() {
+    cd $id-$version
+
+    ./configure --prefix=/usr    \
+                --disable-static \
+                --docdir=/usr/share/doc/$id-$version
+
+    make
+
+    make DESTDIR=$pkgdir install
+
+    mkdir -pv $pkgdir/bin $pkgdir/lib $pkgdir/usr/lib
+    mv -v $pkgdir/usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} $pkgdir/bin
+    mv -v $pkgdir/usr/lib/liblzma.so.* $pkgdir/lib
+    ln -svf ../../lib/$(readlink $pkgdir/usr/lib/liblzma.so) $pkgdir/usr/lib/liblzma.so
+}
