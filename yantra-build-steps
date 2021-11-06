@@ -1,0 +1,71 @@
+yantra system steps
+====================
+dependencies installation
+----------------------------
+sudo apt install bison gawk gcc g++ make texinfo pkg-config grub-efi xorriso -y
+
+
+1.take host system ubuntu 18.04.5
+
+git clone https://github.com/yantraos/yantra-3.0.git
+
+cd yantra-3.0
+
+cd ybuild
+
+./check.sh
+
+need to install host system requirements follow below steps
+
+2.linking /bin/sh to /bin/bash
+
+sudo rm /bin/sh
+
+sudo ln -s /bin/bash /bin/sh
+
+3.installing Bison
+
+sudo apt-get install bison -y
+
+4.install with  gawk 
+
+sudo apt-get install gawk -y
+
+sudo rm /usr/bin/awk 
+
+sudo ln -s /usr/bin/gawk /usr/bin/awk
+
+5.gcc and g++
+sudo apt install  gcc g++ make -y
+
+6. install texinfo
+
+sudo sudo apt-get install texinfo -y
+
+7. install grub-efi
+
+sudo apt-get grub-efi -y
+
+8.install xorriso
+
+
+sudo apt-gt install xorriso -y
+
+9. install libssl-dev
+
+sudo apt-get install libssl-dev -y
+
+10.install pkg-config
+
+sudo apt-get install pkg-config -y
+
+11. install  yaps in hostsystem
+
+cd yaps
+sudo make install PREFIX=usr
+
+12.version check
+
+cd ybuild
+./check.sh
+
