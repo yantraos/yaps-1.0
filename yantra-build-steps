@@ -62,7 +62,7 @@ sudo apt-get install pkg-config -y
 11. install  yaps in hostsystem
 
 cd yaps
-sudo make install PREFIX=usr
+sudo make install PREFIX=usr DESTDIR=/mnt/yantra/
 
 12.version check
 
