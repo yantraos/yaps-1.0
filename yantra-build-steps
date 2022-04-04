@@ -7,7 +7,7 @@ sudo apt install bison gawk gcc g++ make texinfo pkg-config grub-efi xorriso -y
 
 1.take host system ubuntu 18.04.5
 
-git clone https://github.com/yantraos/yantra-3.0.git
+git clone https://github.com/yantraos/yantra-1.0.git
 
 cd yantra-3.0
 
