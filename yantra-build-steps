@@ -67,9 +67,10 @@ sudo make install PREFIX=usr DESTDIR=/mnt/yantra/
 12.version check
 
 cd ybuild
-./check.sh
 
-13.  ./01-toolchain.sh
-14   ./02-system.sh
-13.  ./03-makeiso.sh
+13. ./check.sh
+
+14.  ./01-toolchain.sh
+15   ./02-system.sh
+16.  ./03-makeiso.sh
 
