@@ -9,6 +9,8 @@ sudo apt install bison gawk gcc g++ make texinfo pkg-config grub-efi xorriso -y
 
 git clone https://github.com/yantraos/yantra-1.0.git
 
+mkdir /mnt/yantra
+
 cd yantra-1.0
 
 cd ybuild
