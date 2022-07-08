@@ -2,11 +2,11 @@ mod args;
 mod constants;
 mod structs;
 mod commands {
+    pub mod compile;
     pub mod depends;
-    pub mod list;
     pub mod info;
     pub mod install;
-    pub mod compile;
+    pub mod list;
     pub mod remove;
     pub mod update;
     pub mod upgrade;
@@ -34,16 +34,23 @@ fn main() {
 
     // Depending on what subcommand the user has put in the CLI, we call the related function.
     match &args.task {
-        Task::Install { package, no_depends } =>
-            commands::install::install(package.to_string(), no_depends),
+        Task::Install {
+            package,
+            no_depends,
+        } => commands::install::install(package.to_string(), no_depends),
         Task::Remove { package } => commands::remove::remove(package.to_string()),
-        Task::Upgrade { } => commands::upgrade::upgrade(),
-        Task::Update { } => commands::update::update(),
+        Task::Upgrade { compiler_specs } => commands::upgrade::upgrade(compiler_specs),
+        Task::Update {} => commands::update::update(),
         Task::Info { package } => commands::info::info(package.to_string()),
         Task::Depends { package } => commands::depends::depends(package.to_string()),
-        Task::List { } => commands::list::list(),
-        Task::Compile { package, no_depends, no_install } =>
-            commands::compile::compile(package.to_string(), no_depends, no_install),
+        Task::List {} => commands::list::list(),
+        Task::Compile {
+            package,
+            no_depends,
+            no_install,
+            compiler_specs,
+        } => {
+            commands::compile::compile(package.to_string(), no_depends, no_install, compiler_specs)
+        }
     }
 }
-

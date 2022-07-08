@@ -1,20 +1,28 @@
-use std::fs;
-use std::path::Path;
-use std::process::exit;
-use crate::structs::YBuild;
 use crate::functions::yy_build_path::*;
+use std::path::Path;
+use std::process::{exit, Command};
 
-pub fn get_deps(package: &String) -> Option<Vec<String>> {
-    let ypath : &str = &yy_build_path(package);
+pub fn get_deps(package: &str) -> Vec<String> {
+    let ypath: &str = &yy_build_path(&package.to_string());
 
     if !Path::new(ypath).exists() {
         eprintln!("No ybuild file");
         exit(1);
     }
 
-    let contents = fs::read_to_string(format!("{ypath}/ybuild.yaml"))
-        .expect("Something went wrong reading the file");
-    let yaml: YBuild = serde_yaml::from_str(contents.as_str()).unwrap();
+    let runtime = String::from_utf8(
+        Command::new("bash")
+            .args(["-c", &format!("\"source {ypath}/ybuild && echo $runtime\"")])
+            .output()
+            .unwrap()
+            .stdout,
+    )
+    .unwrap()
+    .split_whitespace()
+    .collect::<Vec<&str>>()
+    .iter()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-    yaml.runtime
+    runtime
 }

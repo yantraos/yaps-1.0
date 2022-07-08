@@ -1,7 +1,12 @@
+use crate::functions::{list_depends::*, read_input::*, y_compiler::*};
 use std::process::exit;
-use crate::functions::{read_input::*, y_compiler::*, list_depends::*};
 
-pub fn compile(app_id: String, no_depends: &bool, no_install: &bool){
+pub fn compile(
+    app_id: String,
+    no_depends: &bool,
+    no_install: &bool,
+    compiler_specs: &Option<String>,
+) {
     if !no_depends {
         println!("Resolving dependencies...");
         let depends_list = list_depends(&app_id);
@@ -19,13 +24,13 @@ pub fn compile(app_id: String, no_depends: &bool, no_install: &bool){
         }
 
         for i in depends_list {
-            if !y_compiler(&i, no_install) {
+            if !y_compiler(&i, *no_install, compiler_specs) {
                 eprintln!("Failed to install {i}");
                 exit(1);
             }
         }
     } else {
-        if !y_compiler(&app_id, no_install) {
+        if !y_compiler(&app_id, *no_install, compiler_specs) {
             eprintln!("Failed to install {app_id}");
             exit(1);
         }

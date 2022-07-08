@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand, crate_version};
+use clap::{crate_version, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[clap(name = "yaps")]
@@ -24,45 +24,47 @@ pub enum Task {
         package: String,
 
         #[clap(short, long)]
-        #[clap(takes_value= false)]
+        #[clap(takes_value = false)]
         /// Skip dependencies resolving
         no_depends: bool,
     },
 
     #[clap(about = "Remove packages from the system")]
-    Remove {
-        package: String,
-    },
+    Remove { package: String },
 
     #[clap(about = "Update repository packages database")]
-    Update { },
+    Update {},
 
     #[clap(about = "Print information of specified package")]
-    Info {
-        package: String,
-    },
+    Info { package: String },
 
     #[clap(about = "Perform system package updation")]
-    Upgrade { },
+    Upgrade {
+        #[clap(long)]
+        /// Set Compiler specification style
+        compiler_specs: Option<String>,
+    },
 
     #[clap(about = "List all avaliable packages")]
-    List { },
+    List {},
 
     #[clap(about = "Configure packages from source")]
     Compile {
         package: String,
         #[clap(long)]
-        #[clap(takes_value= false)]
+        #[clap(takes_value = false)]
         /// Skip dependencies resolving
         no_depends: bool,
 
-        #[clap( long)]
-        #[clap(takes_value= false)]
+        #[clap(long)]
+        /// Set Compiler specification style
+        compiler_specs: Option<String>,
+
+        #[clap(long)]
+        #[clap(takes_value = false)]
         /// Set NOINSTALL flags to skip install while compiling
         no_install: bool,
     },
     #[clap(about = "Return list of required dependencies of specified package")]
-    Depends {
-        package: String,
-    }
+    Depends { package: String },
 }
