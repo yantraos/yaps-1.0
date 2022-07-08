@@ -96,12 +96,13 @@ ychroot() {
         umount $YDIR/dev{/pts,}
         umount $YDIR/{sys,proc,run}
     }
+
     # mount pseudo filesystem
     _mount
 
     echo "executing $@"
     # chroot command
-    chroot "$YDIR" /usr/bin/env -i \
+    chroot "$YDIR" /tools/bin/env -i \
     HOME=/root \
     TERM="$TERM" \
     PS1='toolchain (yantra) \u:\w \$ ' \
