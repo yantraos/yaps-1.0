@@ -60,7 +60,7 @@ ychroot() {
 
     echo "executing $@"
     # chroot command
-    chroot "$YDIR" /usr/bin/env -i \
+    chroot "$YDIR" /tools/bin/env -i \
     HOME=/root \
     TERM="$TERM" \
     PS1='toolchain (yantra) \u:\w \$ ' \
