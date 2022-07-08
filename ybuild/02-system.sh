@@ -201,7 +201,7 @@ for i in man-pages \
 
     echo "=> compiling $i"
 
-    ychroot /tools/bin/yaps compile $i --no-depends --compiler-specs /yaps.build.conf
+    ychroot /tools/bin/yaps compile $i --no-depends --compiler-specs yaps.build.conf
 done
 
 for i in 01-sysconfig \
@@ -209,5 +209,5 @@ for i in 01-sysconfig \
          03-clean; do
 
     echo "=> compiling $i"
-    ychroot /tools/bin/yaps compile $i --no-install --no-depends --compiler-specs /yaps.build.conf
+    ychroot /tools/bin/yaps compile $i --no-install --no-depends --compiler-specs yaps.build.conf
 done
