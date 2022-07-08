@@ -24,16 +24,13 @@ install_dependencies() {
         texinfo grub-efi xorriso libssl-dev \
         pkg-config meson ninja-build \
         cargo rustc -y
-	
-	sudo rm /usr/bin/awk
-	sudo ln -s /usr/bin/gawk /usr/bin/awk
 }
 
 install_yaps() {
 	echo -e "\nInstalling yaps...\n"
 
 	cd yaps
-	meson build --prefix /mnt/yantra/usr
+	[[ -d "yaps/build/" ]] || meson build --prefix /mnt/yantra/usr
 	sudo ninja -C build install
 	cd ..
 }
@@ -71,7 +68,7 @@ case $1 in
 
   *)
     [[ -z "$YDIR" ]] && prepare
-    install_dependencies
+    [[ -x "$(command -v cargo)" && -x "$(command -v gawk)" ]] || install_dependencies
     install_yaps
     make_iso
     ;;
