@@ -1,5 +1,7 @@
+use std::env;
+
 pub const APPDB_PATH : &str = "/home/prtksu/.var/cache/yaps";
-// pub const MIRROR : &str = "http://3.109.132.140/yaps/";
+pub const MIRROR : &str = "http://3.109.132.140/yaps/";
 pub const PKG_DB_URL_PREFIX : &str = "database";
 pub const YDATADIR : &str = "yaps";
 pub const REPOSITORY : &str = "/yantra/repository";
