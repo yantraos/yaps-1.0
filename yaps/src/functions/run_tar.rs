@@ -1,15 +1,10 @@
+use crate::constants::*;
 use std::io::prelude::*;
 use std::process::{Command, Stdio};
-use crate::constants::*;
 
 pub fn run_tar(path: &String) {
     let mut cmd_tar = Command::new("tar")
-        .args(
-            [
-                "-tf",
-                path,
-            ],
-        )
+        .args(["-tf", path])
         .stdout(Stdio::piped())
         .spawn()
         .unwrap();
@@ -19,7 +14,6 @@ pub fn run_tar(path: &String) {
         .stdout(Stdio::piped())
         .spawn()
         .unwrap();
-
 
     if let Some(ref mut stdout) = cmd_tar.stdout {
         if let Some(ref mut stdin) = cmd_trigger.stdin {

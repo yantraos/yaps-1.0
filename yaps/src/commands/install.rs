@@ -1,7 +1,7 @@
+use crate::functions::{list_depends::*, read_input::*, y_installer::*};
 use std::process::exit;
-use crate::functions::{list_depends::*, y_installer::*, read_input::*};
 
-pub fn install(app_id: String, no_depends: &bool){
+pub fn install(app_id: String, no_depends: &bool) {
     if !no_depends {
         println!("Resolving dependencies...");
         let depends_list = list_depends(&app_id);

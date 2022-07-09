@@ -1,21 +1,18 @@
-use std::process::{ Command, exit };
-use std::path::{Path, PathBuf};
+use std::fs::{remove_dir, remove_dir_all, remove_file, File};
 use std::io::{BufRead, BufReader};
-use std::fs::{File, read_to_string, remove_dir, remove_dir_all, remove_file};
+use std::path::{Path, PathBuf};
+use std::process::{exit, Command};
 
-use crate::structs::YBuild;
-
-pub fn remove(app_id: String){
+pub fn remove(app_id: String) {
     // Declare all constants
-    const ROOTDIR : &str = "/";
-    const YDATADIR : &str = "yaps";
+    const ROOTDIR: &str = "/";
+    const YDATADIR: &str = "yaps";
 
     // Declare all variables
     let app_datadir = format!("{ROOTDIR}/usr/share/yaps/{app_id}");
     let info_file = format!("{app_datadir}/info");
     let files_list = format!("{app_datadir}/files");
-    let install_script = format!("{app_datadir}/install.yaml");
-
+    let install_script = format!("{app_datadir}/install");
 
     // Check if app data exist
     if !Path::new(&app_datadir).is_dir() {
@@ -37,17 +34,11 @@ pub fn remove(app_id: String){
 
     // Check and execute preremove() function
     println!("=> Checking and executing pre-remove script");
-    let contents = read_to_string(&install_script)
-            .expect("Something went wrong reading the file");
-    let yaml: YBuild = serde_yaml::from_str(contents.as_str()).unwrap();
-
     Command::new("bash")
-        .args(
-            [
-                "-c",
-                &yaml.preremove.unwrap_or("true".to_string()).as_str(),
-            ],
-        );
+        .args(["-c", &format!("\"source {install_script} && preremove\"")])
+        .output()
+        .unwrap()
+        .stdout;
 
     // Remove installed files
     let mut file = BufReader::new(File::open(&files_list).expect("Unable to open file"));
@@ -72,26 +63,22 @@ pub fn remove(app_id: String){
         }
     }
 
-
     // Check and execute preremove() function
     println!("=> Checking and executing post-remove script");
-    Command::new("postremove")
-        .env(contents.as_str(), "/bin")
-        .spawn()
-        .expect("preremove command failed to start");
-
+    Command::new("bash")
+        .args(["-c", &format!("\"source {install_script} && postremove\"")])
+        .output()
+        .unwrap()
+        .stdout;
 
     // Removes files list file
     remove_file(Path::new(&files_list)).expect("File cannot be deleted!");
 
     // Removes all other files related to app id
-    remove_dir_all(
-        Path::new(
-            &format!(
-                "{ROOTDIR}/usr/share/{YDATADIR}/{app_id}",
-            ),
-        ),
-    ).expect("Directory cannot be deleted!");
+    remove_dir_all(Path::new(&format!(
+        "{ROOTDIR}/usr/share/{YDATADIR}/{app_id}",
+    )))
+    .expect("Directory cannot be deleted!");
 
     // At last, return a success message
     println!("{app_id} removed successfully");

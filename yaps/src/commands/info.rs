@@ -2,8 +2,7 @@ use crate::functions::y_info::*;
 use crate::structs::YInfo;
 
 pub fn info(package: String) {
-    let _info : YInfo = y_info(&package);
-
+    let _info: YInfo = y_info(&package);
 
     println!("Name         : {}", _info.name);
     println!("Version      : {}", _info.version);
@@ -11,11 +10,11 @@ pub fn info(package: String) {
 
     match _info.description {
         Some(description) => println!("Description  : {}", description),
-        None => {},
+        None => {}
     }
 
     match _info.depends {
         Some(depends) => println!("Depends on   : {}", depends),
-        None => {},
+        None => {}
     }
 }
