@@ -54,4 +54,4 @@ if [ -x dummy ]
   else echo "g++ compilation failed"; fi
 rm -f dummy.c dummy
 
-echo "yaps $(yaps version)"
+echo "yaps $(yaps --version)"
